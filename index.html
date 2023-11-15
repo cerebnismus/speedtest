@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Speed Test</title>
+</head>
+<body>
+    <button id="runTest">Run Test</button>
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('runTest').addEventListener('click', async () => {
+            const resultsDiv = document.getElementById('results');
+            
+            // Download Test
+            let startTime = Date.now();
+            await fetch('http://3.94.9.109:5000/download');
+            let endTime = Date.now();
+            let downloadSpeed = calculateSpeed(endTime - startTime, 1000); // Assuming 1000 MB file size
+            resultsDiv.innerHTML += `Download Speed: ${downloadSpeed} Mbps<br>`;
+
+            // Upload Test
+            let blob = new Blob([new ArrayBuffer(1000000000)]); // 1000 MB
+            startTime = Date.now();
+            await fetch('http://3.94.9.109:5000/upload', { method: 'POST', body: blob });
+            endTime = Date.now();
+            let uploadSpeed = calculateSpeed(endTime - startTime, 1000);
+            resultsDiv.innerHTML += `Upload Speed: ${uploadSpeed} Mbps`;
+        });
+
+        function calculateSpeed(time, size) {
+            return (size / (time / 1000)).toFixed(2);
+        }
+    </script>
+</body>
+</html>
